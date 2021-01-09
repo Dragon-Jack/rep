@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>客户管理</title>
+    <link href="../../html/css/style.css" rel="stylesheet" type="text/css"/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+    <script type="text/javascript">
+        function tipOpen(content) {
+            $(".tipright p").text(content);
+            $("#tip").fadeIn();
+        }
+
+        function tipClose(id) {
+            $("#tip").fadeOut(200);
+            alert(id)
+        }
+
+        function allottipOpen() {
+            $("#allottip").fadeIn(200);
+        }
+
+        function allottipclose() {
+            $("#allottip").fadeOut(200);
+        }
+    </script>
+</head>
+<body>
+<div class="place"><span>位置：</span>
+    <ul class="placeul">
+        <li>营销管理</li>
+        <li>客户管理</li>
+        <li>基本内容</li>
+    </ul>
+</div>
+<div id="all" class="rightinfo">
+    <ul class="tools">
+        <li> 公司名称:
+            <input type="text" v-model="params.offname"/>
+        </li>
+        <li> 客户姓名:
+            <input type="text" v-model="params.name"/>
+        </li>
+        <li> 所属区域：
+            <select v-model="params.province">
+                <option>北京</option>
+                <option>江苏</option>
+                <option>广东</option>
+            </select>
+            <select v-model="params.area">
+                <option>北京</option>
+                <option>南京</option>
+                <option>佛山</option>
+            </select>
+        </li>
+        <li> 状态：
+            <select v-model="params.status">
+                <option value="0">可用</option>
+                <option value="1">不可用</option>
+            </select>
+        </li>
+        <li> 是否分配：
+            <select v-model="params.client">
+                <option value="1">已分配</option>
+                <option value="0">未分配</option>
+            </select>
+        </li>
+        <li class="subBut" @click="selectMa(1,pageInfo.pageSize)"><img src="../../html/images/t06.png"/>查询</li>
+        <li class="subBut" onclick="window.location.href='customerAdd'"><img src="../../html/images/t01.png"/>添加</li>
+    </ul>
+    <table class="tablelist">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>客户姓名</th>
+            <th>性别</th>
+            <th>联系电话</th>
+            <th>所属公司</th>
+            <th>所属区域</th>
+            <th>状态</th>
+            <th>创建时间</th>
+            <th>创建人</th>
+            <th>分配时间</th>
+            <th>客户人员</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="c in pageInfo.list">
+            <td>{{c.id}}</td>
+            <td>{{c.name}}</td>
+            <td>{{c.sex==1?'男':'女'}}</td>
+
+            <td>{{c.phone}}</td>
+            <td>{{c.offname}}</td>
+            <td>{{c.province}}{{c.area}}</td>
+            <td>{{c.status==1?'不可用':'可用'}}</td>
+            <td>{{c.createtime}}</td>
+            <td>{{c.createby}}</td>
+            <td>{{c.allottime}}</td>
+            <td>{{c.customer}}</td>
+            <td>
+                <a href="/customerView" class="tablelink">查看详情</a>
+                <!--<router-link to="">查看详情</router-link>-->
+                <a href="customerUpdate" class="tablelink">修改</a>
+                <a href="javascript:void(0)" class="tablelink" @click="prompt(c.id)">注销</a>
+                <a href="javascript:void(0);" class="tablelink" @click="approval(c.id)">分配</a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    <div class="pagin">
+        <div class="message">共<i class="blue">{{pageInfo.total}}</i>
+            条记录，当前显示第&nbsp;<i class="blue">{{pageInfo.pageNum}}&nbsp;</i>页/ {{pageInfo.pages}} 页
+        </div>
+        <ul class="paginList">
+            <li class="paginItem">
+                <a @click="selectMa(pageInfo.prePage,pageInfo.pageSize)"
+                   v-if="pageInfo.pageNum!=1">上一页</a>
+            </li>
+            <li class="paginItem" v-for="num in pageInfo.navigatepageNums">
+                <a @click="selectMa(num,pageInfo.pageSize)">{{num}}</a>
+            </li>
+            <li class="paginItem">
+                <a @click="selectMa(pageInfo.nextPage,pageInfo.pageSize)"
+                   v-if="pageInfo.pageNum!=pageInfo.pages">下一页</a>
+            </li>
+        </ul>
+    </div>
+    <!-- 提示框 -->
+    <div id="tip" class="tip">
+        <div class="tiptop"><span>提示信息</span><a onclick="tipClose()"></a></div>
+        <div class="tipinfo"><span><img src="../../html/images/ticon.png"/></span>
+            <div class="tipright">
+                <p></p>
+                <cite>如果是请点击确定按钮 ，否则请点取消。</cite></div>
+        </div>
+        <div class="tipbtn">
+            <input name="" type="button" class="sure" value="确定" onclick="tipClose()"/>
+            &nbsp;
+            <input name="" type="button" class="cancel" value="取消" onclick="tipClose()"/>
+        </div>
+    </div>
+    <!-- 审批提示框 -->
+    <div id="allottip" class="tip">
+        <div class="tiptop">
+            <span>提示信息</span><a onclick="allottipclose()"></a>
+        </div>
+        <div class="tipinfo1">
+
+            部门：
+            <select class="dfselect" disabled="disabled">
+                <option>请选择</option>
+                <option selected="selected">市场部</option>
+                <option>采购部</option>
+                <option>财务部</option>
+            </select>
+            <p/>
+            职位：
+            <select class="dfselect">
+                <option>请选择</option>
+                <option>一组组员</option>
+                <option>二组组员</option>
+                <option>三组组员</option>
+            </select>
+            <p/>
+            姓名：
+            <select class="dfselect">
+                <option>请选择</option>
+                <option>刘备</option>
+                <option>曹操</option>
+            </select>
+            <p/>
+        </div>
+        <div class="tipbtn">
+            <input name="" type="button" class="sure" value="确定" onclick="allottipclose()"/>
+            &nbsp;
+            <input name="" type="button" class="cancel" value="取消" onclick="allottipclose()"/>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('.tablelist tbody tr:odd').addClass('odd');
+</script>
+
+<script type="text/javascript" src="../../html/vue/vue.js"></script>
+<script src="../../html/js/vue-router.min.js"></script>
+<script type="text/javascript" src="../../html/vue/axios.js"></script>
+<script type="text/javascript" src="../../html/layer/layer.js"></script>
+
+<script type="text/javascript" src="../../html/DataVue/Market.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>审批提示框</title>
+    <link href="../../html/css/style.css" rel="stylesheet" type="text/css"/>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link href="../../html/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<!-- 审批提示框 -->
+<!--部门：-->
+<!--<select class="dfselect" disabled="disabled">-->
+<!--<option selected="selected">市场部</option>-->
+<!--<option>采购部</option>-->
+<!--<option>财务部</option>-->
+<!--</select>-->
+<!--<br><br><br>-->
+<div id="all">
+    职位：
+    <select class="dfselect">
+        <option v-for="p in listData">{{p.position}}</option>
+    </select>
+    <br><br><br>
+    姓名：
+    <select class="dfselect" v-model="params.name">
+        <option v-for="n in listData">{{n.name}}</option>
+    </select>
+    <br><br><br><br><br><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="btn" class="btn btn-success" @click="add">确定</button>
+</div>
+</body>
+
+<script type="text/javascript" src="../../html/vue/vue.js"></script>
+<script type="text/javascript" src="../../html/vue/axios.js"></script>
+<script type="text/javascript" src="../../html/layer/layer.js"></script>
+
+<script type="text/javascript" src="../../html/DataVue/Approval.js"></script>
+</html>
